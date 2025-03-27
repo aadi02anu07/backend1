@@ -3,37 +3,44 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
-const patientRoutes = require("./routes/patientRoutes");
+// Import Routes
 const authRoutes = require("./routes/authRoutes");
+const patientRoutes = require("./routes/patientRoutes");
 
 const app = express();
+
+// Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "*" })); // ✅ Allow all origins for now
 
-// ✅ Default route to check if the server is running
-app.get("/", (req, res) => {
-  res.send("Backend is running successfully on Railway!");
-});
-
-// ✅ Routes
-app.use("/api/patients", patientRoutes);
-app.use("/api/auth", authRoutes);
-
-// ✅ Use PORT from environment variables (default: 5000)
-const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
-
+// ✅ Connect to MongoDB Atlas
 mongoose
-  .connect(MONGO_URI, {
+  .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => {
-    console.log("✅ Connected to MongoDB");
-    app.listen(PORT, () => {
-      console.log(`🚀 Server is running on port ${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.error("❌ MongoDB connection error:", error);
+  .then(() => console.log("✅ MongoDB Connected Successfully"))
+  .catch((err) => {
+    console.error("❌ MongoDB Connection Error:", err.message);
+    process.exit(1);
   });
+
+// ✅ Define Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/patients", patientRoutes);
+
+// ✅ Test API Route
+app.get("/", (req, res) => {
+  res.status(200).send("🚀 API is working on Railway!");
+});
+
+// ✅ 404 Handler for Undefined Routes
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found" });
+});
+
+// ✅ Start Server (Use Railway’s PORT)
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});
