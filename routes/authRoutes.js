@@ -60,6 +60,18 @@ router.post("/staff/login", async (req, res) => {
   }
 });
 
+// ✅ GET ALL REGISTERED STAFF MEMBERS
+router.get("/staff", async (req, res) => {
+  try {
+    const staffList = await Staff.find({}, "-password"); // Exclude passwords for security
+    res.status(200).json(staffList);
+  } catch (error) {
+    console.error("❌ Error Fetching Staff:", error.message);
+    res.status(500).json({ error: "Error fetching staff members" });
+  }
+});
+
+
 // ✅ PATIENT SIGNUP
 router.post("/signup", async (req, res) => {
   try {
