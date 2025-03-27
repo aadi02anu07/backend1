@@ -37,3 +37,7 @@ mongoose
   .catch((error) => {
     console.error("❌ MongoDB connection error:", error);
   });
+
+// ✅ Debugging log for route registration
+console.log("🔍 Registering Patient Routes at /api/patients");
+app.use("/api/patients", patientRoutes);
