@@ -78,4 +78,9 @@ router.post("/patient/login", async (req, res) => {
   }
 });
 
+// ✅ Add a test route to confirm it's working
+router.get("/", (req, res) => {
+  res.send("Auth API is working!");
+});
+
 module.exports = router;
